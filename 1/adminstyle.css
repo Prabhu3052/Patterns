@@ -1,0 +1,579 @@
+/* =================================================================
+   PATTASU KADAI - MODERN ADMIN UI BY GEMINI
+   =================================================================
+   - New professional color palette
+   - Fully responsive design for mobile, tablet, and desktop
+   - Enhanced readability and user experience
+   - Modernized components (buttons, tables, forms, modals)
+   - No changes needed in HTML or JavaScript
+   ================================================================= */
+
+/* --- 1. ROOT VARIABLES & BASE STYLES --- */
+:root {
+    --primary-color: #4f46e5; /* Modern Indigo */
+    --primary-hover: #4338ca;
+    --secondary-color: #64748b; /* Cool Gray */
+    --secondary-hover: #475569;
+    --success-color: #16a34a; /* Vibrant Green */
+    --success-hover: #15803d;
+    --danger-color: #dc2626; /* Strong Red */
+    --danger-hover: #b91c1c;
+    --warning-color: #f97316; /* Bright Orange */
+    --warning-hover: #ea580c;
+
+    --bg-color: #f8fafc; /* Very light gray background */
+    --surface-color: #ffffff; /* White for cards/surfaces */
+    --border-color: #e2e8f0; /* Light border color */
+
+    --text-primary: #1e293b; /* Dark text for high contrast */
+    --text-secondary: #475569; /* Lighter text for secondary info */
+    --text-on-primary: #ffffff;
+    --text-on-dark: #ffffff;
+
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    --border-radius-md: 0.5rem; /* 8px */
+    --border-radius-lg: 0.75rem; /* 12px */
+    --transition-speed: 0.2s;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* --- 2. LAYOUT & STRUCTURE --- */
+.container {
+    width: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+.header {
+    background-color: var(--surface-color);
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    box-shadow: var(--shadow-sm);
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 4.5rem;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--primary-color);
+}
+
+.logo-icon {
+    height: 2.25rem;
+    width: 2.25rem;
+}
+
+.header-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.main-layout {
+    display: flex;
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.admin-sidebar {
+    width: 260px;
+    background-color: var(--surface-color);
+    padding: 2rem 1rem;
+    border-right: 1px solid var(--border-color);
+    flex-shrink: 0;
+    transition: width var(--transition-speed) ease-in-out;
+}
+
+.sidebar-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    padding: 0 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+}
+
+.sidebar-nav button {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border-radius: var(--border-radius-md);
+    border: none;
+    background: none;
+    cursor: pointer;
+    text-align: left;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+}
+
+.sidebar-nav button:hover {
+    background-color: var(--bg-color);
+}
+
+.sidebar-nav button.active {
+    background-color: var(--primary-color);
+    color: var(--text-on-primary);
+    font-weight: 600;
+    box-shadow: var(--shadow-md);
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 2rem;
+    overflow-y: auto;
+}
+
+.view-section {
+    display: none;
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+.view-section.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- 3. GENERAL COMPONENTS (Buttons, Cards, Forms) --- */
+.admin-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    gap: 1rem;
+}
+
+.page-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.button {
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--border-radius-md);
+    transition: all var(--transition-speed);
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    box-shadow: var(--shadow-sm);
+}
+.button:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.button-primary { background-color: var(--primary-color); color: var(--text-on-primary); }
+.button-primary:hover { background-color: var(--primary-hover); }
+
+.button-secondary { background-color: var(--secondary-color); color: var(--text-on-dark); }
+.button-secondary:hover { background-color: var(--secondary-hover); }
+
+.button-success { background-color: var(--success-color); color: var(--text-on-dark); }
+.button-success:hover { background-color: var(--success-hover); }
+
+.button-warning { background-color: var(--warning-color); color: var(--text-on-dark); }
+.button-warning:hover { background-color: var(--warning-hover); }
+
+.button-info { background-color: var(--secondary-color); color: var(--text-on-dark); }
+.button-info:hover { background-color: var(--secondary-hover); }
+
+/* Card Style for containers */
+.table-container, .left-panel, .right-panel, .customer-details-bar {
+    background-color: var(--surface-color);
+    padding: 1.5rem;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+}
+
+/* Form Elements */
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+.form-group input, input[type="text"], input[type="tel"], input[type="number"] {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    box-sizing: border-box;
+    font-size: 1rem;
+    transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+}
+input[type="text"]:focus, input[type="tel"]:focus, input[type="number"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+}
+
+/* --- 4. TABLE STYLES --- */
+.custom-table {
+    width: 100%;
+    text-align: left;
+    border-collapse: collapse;
+}
+
+.custom-table thead {
+    background-color: var(--bg-color);
+}
+
+.custom-table th {
+    padding: 1rem;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+}
+
+.custom-table td {
+    padding: 1rem;
+    font-size: 0.95rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.custom-table tbody tr {
+    transition: background-color var(--transition-speed);
+}
+
+.custom-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.custom-table tbody tr:not(.category-header-row):hover {
+    background-color: #f8fafc;
+}
+
+.category-header-row td, .category-header-row th {
+    background-color: #eef2ff; /* Light indigo */
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 1rem;
+    color: var(--primary-hover);
+    border: none;
+}
+.out-of-stock {
+    opacity: 0.6;
+    background-color: #fef2f2; /* Light red */
+}
+.out-of-stock td {
+    text-decoration: line-through;
+}
+
+/* Price Indicators */
+.offer-price-cell.increased { color: var(--success-color); font-weight: bold; }
+.offer-price-cell.decreased { color: var(--danger-color); font-weight: bold; }
+
+/* Table Action Buttons */
+.custom-table .button, .custom-table button {
+    padding: 5px 10px;
+    font-size: 12px;
+    margin-right: 5px;
+    font-weight: 500;
+}
+.delete-btn { background-color: var(--danger-color); color: white; }
+.delete-btn:hover { background-color: var(--danger-hover); }
+.no-stock-btn { background-color: var(--warning-color); color: white; }
+.no-stock-btn:hover { background-color: var(--warning-hover); }
+.in-stock-btn { background-color: var(--success-color); color: white; }
+.in-stock-btn:hover { background-color: var(--success-hover); }
+
+
+/* --- 5. BILLING PAGE STYLES --- */
+.billing-nav-container {
+    text-align: center;
+    padding: 3rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: calc(100vh - 15rem);
+}
+
+.billing-nav-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.billing-nav-btn {
+    font-size: 1.25rem;
+    font-weight: 600;
+    padding: 2.5rem;
+    border-radius: var(--border-radius-lg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    min-width: 280px;
+    color: var(--text-on-dark);
+    box-shadow: var(--shadow-md);
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+}
+.billing-nav-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+}
+
+.billing-nav-btn i { font-size: 3rem; }
+.billing-nav-btn.new-invoice { background-color: var(--success-color); }
+.billing-nav-btn.old-invoice { background-color: var(--primary-color); }
+
+.customer-details-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    align-items: end;
+    margin-bottom: 2rem;
+}
+
+.discount-box { display: flex; flex-direction: column; }
+.discount-box label { font-size: 0.8rem; margin-bottom: 0.25rem; color: var(--text-secondary); }
+.discount-box input { text-align: right; }
+
+.invoice-creator-layout {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 2rem;
+}
+
+.left-panel h4 {
+    font-size: 1.2rem;
+    margin-top: 0;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.searchable-dropdown { position: relative; margin-bottom: 1.5rem; }
+.dropdown-arrow { position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-secondary); cursor: pointer; }
+.dropdown-content {
+    display: none; position: absolute; background-color: var(--surface-color); width: 100%;
+    box-shadow: var(--shadow-md); z-index: 10; max-height: 200px; overflow-y: auto;
+    border: 1px solid var(--border-color); border-top: none; border-radius: 0 0 var(--border-radius-md) var(--border-radius-md);
+}
+.dropdown-content div { padding: 12px 16px; cursor: pointer; }
+.dropdown-content div:hover { background-color: var(--bg-color); }
+.dropdown-content.show { display: block; }
+
+.left-panel-buttons { display: flex; gap: 1rem; margin-top: 2rem; }
+.left-panel-buttons button { flex: 1; justify-content: center; }
+
+.bill-header { text-align: center; margin-bottom: 2rem; }
+.bill-header h1 { font-size: 2.25rem; margin-bottom: 0.5rem; }
+.bill-info {
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+    margin-top: 1rem; border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color); padding: 0.75rem 0; font-size: 0.9rem;
+}
+
+.bill-table input { width: 70px; text-align: center; }
+.bill-table .remove-item-btn { background: none; border: none; color: var(--danger-color); cursor: pointer; font-size: 1.2rem; padding: 0; }
+.bill-table .remove-item-btn:hover { color: var(--danger-hover); }
+
+.calculation-box { text-align: right; margin-top: 2rem; padding-left: 40%; }
+.calc-row { display: flex; justify-content: space-between; margin-bottom: 1rem; font-size: 1rem; }
+.calc-row span:first-child { font-weight: 500; color: var(--text-secondary); }
+.calc-row span:last-child { font-weight: 600; color: var(--text-primary); }
+.calc-total { font-size: 1.75rem; border-top: 2px solid var(--text-primary); padding-top: 1rem; }
+
+.bill-actions { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem; }
+
+
+/* --- 6. MODAL STYLES --- */
+.modal-backdrop {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex; justify-content: center; align-items: center;
+    z-index: 1000; animation: fadeIn 0.3s;
+}
+
+.modal-content {
+    background-color: var(--surface-color);
+    padding: 2.5rem;
+    border-radius: var(--border-radius-lg);
+    width: 90%; max-width: 550px;
+    box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
+}
+.modal-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; }
+.modal-form .form-group { display: flex; flex-direction: column; gap: 1.25rem; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem; }
+
+/* --- 7. TOAST NOTIFICATIONS --- */
+#toast-container {
+    position: fixed; top: 20px; right: 20px; z-index: 1050;
+    display: flex; flex-direction: column; align-items: flex-end;
+}
+.toast {
+    background: var(--text-primary);
+    color: var(--text-on-dark);
+    padding: 12px 24px;
+    margin-bottom: 10px;
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-md);
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.4s ease-in-out;
+}
+.toast.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* --- 8. UTILITY & MISC --- */
+.hidden { display: none !important; }
+button:disabled { background-color: #9ca3af; cursor: not-allowed; }
+.overflow-x-auto { overflow-x: auto; }
+
+
+/* =================================================================
+   RESPONSIVE DESIGN (MEDIA QUERIES)
+   ================================================================= */
+
+/* --- TABLET VIEW (e.g., iPads) --- */
+@media (max-width: 1024px) {
+    .main-layout {
+        flex-direction: column;
+    }
+    .admin-sidebar {
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .sidebar-title {
+        margin: 0;
+    }
+    .sidebar-nav {
+        display: flex;
+        gap: 0.5rem;
+    }
+    .sidebar-nav button {
+        margin-bottom: 0;
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+    .invoice-creator-layout {
+        grid-template-columns: 1fr;
+    }
+    .main-content {
+        padding: 1.5rem;
+    }
+    .calculation-box {
+        padding-left: 0;
+    }
+}
+
+/* --- MOBILE VIEW (e.g., iPhones, Android phones) --- */
+@media (max-width: 767px) {
+    .container {
+        padding: 0 1rem;
+    }
+    .admin-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .page-title {
+        font-size: 1.5rem;
+    }
+    .header-content {
+        height: 4rem;
+    }
+    .header-title {
+        font-size: 1.2rem;
+    }
+    .admin-sidebar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .sidebar-nav {
+        flex-direction: column;
+    }
+    .sidebar-nav button {
+        justify-content: center;
+    }
+    .main-content {
+        padding: 1rem;
+    }
+    .customer-details-bar {
+        grid-template-columns: 1fr;
+    }
+    .billing-nav-buttons {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    .billing-nav-btn {
+        min-width: unset;
+        width: 100%;
+        padding: 1.5rem;
+    }
+    .bill-info {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .bill-actions, #finalized-actions {
+        flex-direction: column;
+    }
+    .bill-actions button, #finalized-actions button {
+        width: 100%;
+    }
+    .modal-content {
+        padding: 1.5rem;
+        width: 95%;
+    }
+}

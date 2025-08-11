@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pattaasu Kadai - Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container"><div class="header-content"><div class="logo-container"><svg class="logo-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048l5.962-5.962a.75.75 0 011.06 1.06l-5.962 5.962A6.75 6.75 0 0012 19.5a6.75 6.75 0 005.362-10.952l-5.962 5.962a.75.75 0 01-1.06-1.06l5.962-5.962z" /></svg><h1 class="header-title"><i class="fas fa-fire"></i> Pattaasu Kadai</h1></div></div></div>
+    </header>
+    <div class="main-layout">
+        <aside class="admin-sidebar">
+            <h2 class="sidebar-title"><i class="fas fa-cogs"></i> Management</h2>
+            <nav class="sidebar-nav">
+                <button id="nav-enquiry" class="nav-link"><i class="fas fa-question-circle"></i> Enquiry</button>
+                <button id="nav-products" class="nav-link"><i class="fas fa-box-open"></i> Products</button>
+                <button id="nav-billing" class="nav-link active"><i class="fas fa-file-invoice"></i> Billing</button>
+            </nav>
+        </aside>
+        <main class="main-content">
+            
+            <section id="enquiry-view" class="view-section">
+    <div class="admin-header">
+        <h2 class="page-title"><i class="fas fa-question-circle"></i> Enquiry (Price List)</h2>
+    </div>
+    <div id="enquiry-product-list" class="table-container">
+        </div>
+</section>
+
+            <section id="products-management-view" class="view-section">
+                <div class="admin-header">
+                    <h2 class="page-title"><i class="fas fa-box-open"></i> Manage Products</h2>
+                    <div><button id="add-product-btn" class="button button-primary"><i class="fas fa-plus"></i> Add New Product</button><button id="save-to-db-btn" class="button button-success"><i class="fas fa-save"></i> Save Changes to DB</button></div>
+                </div>
+                <div class="table-container">
+                    <table class="custom-table">
+                        <thead><tr><th>Product ID</th><th>English Name</th><th>Tamil Name</th><th>Original Price</th><th>Offer Price</th><th>Category</th><th>Actions</th></tr></thead>
+                        <tbody id="admin-table-body"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="billing-management-view" class="view-section active">
+                <div id="billing-nav" class="billing-nav-container">
+                    <h2 class="page-title"><i class="fas fa-file-invoice"></i> Billing Management</h2>
+                    <div class="billing-nav-buttons">
+                        <button id="new-invoice-btn" class="billing-nav-btn new-invoice"><i class="fas fa-plus-circle"></i> New Invoice</button>
+                        <button id="old-invoices-btn" class="billing-nav-btn old-invoice"><i class="fas fa-history"></i> Old Invoices</button>
+                    </div>
+                </div>
+
+                <div id="new-invoice-creator" class="hidden">
+                    <div class="admin-header">
+                         <h2 class="page-title"><i class="fas fa-file-invoice-dollar"></i> Create New Invoice</h2>
+                         <button id="back-to-billing-btn" class="button button-secondary"><i class="fas fa-arrow-left"></i> Back</button>
+                    </div>
+                    <div class="customer-details-bar">
+                        <input type="text" id="customer-name" placeholder="Customer Name">
+                        <input type="tel" id="customer-phone" placeholder="Customer Phone">
+                        <div class="discount-box">
+                            <label for="bill-discount-percent">Discount (%)</label>
+                            <input type="number" id="bill-discount-percent" value="0" min="0" max="100">
+                        </div>
+                    </div>
+
+                    <div class="invoice-creator-layout">
+                        <div class="left-panel">
+                            <h4><i class="fas fa-plus-square"></i> Add Products</h4>
+                            <div class="searchable-dropdown">
+                                <input type="text" id="product-search" placeholder="Search or select a product...">
+                                <i class="fas fa-chevron-down dropdown-arrow"></i>
+                                <div class="dropdown-content" id="product-dropdown"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="product-quantity">Quantity</label>
+                                <input type="number" id="product-quantity" value="1" min="1">
+                            </div>
+                            <div class="left-panel-buttons">
+                                <button id="clear-selection-btn" class="button button-secondary"><i class="fas fa-trash"></i> Clear</button>
+                                <button id="add-to-bill-btn" class="button button-success"><i class="fas fa-check"></i> Submit</button>
+                            </div>
+                        </div>
+
+                        <div class="right-panel">
+                            <div id="bill-preview-area">
+                                <div class="bill-header">
+                                    <div class="logo-container">
+                                        <svg class="logo-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048l5.962-5.962a.75.75 0 011.06 1.06l-5.962 5.962A6.75 6.75 0 0012 19.5a6.75 6.75 0 005.362-10.952l-5.962 5.962a.75.75 0 01-1.06-1.06l5.962-5.962z" /></svg>
+                                        <h1><i class="fas fa-fire"></i> Pattaasu Kadai</h1>
+                                    </div>
+                                    <div class="bill-info">
+                                        <div id="bill-customer-name-display">Customer: <span></span></div>
+                                        <div>Date: <span id="bill-date-display"></span></div>
+                                        <div>Bill No: <span id="bill-number-display"></span></div>
+                                    </div>
+                                </div>
+                                <div class="table-container">
+                                    <table class="custom-table bill-table">
+                                        <thead><tr><th>Name</th><th>Qty</th><th>Price</th><th>Amount</th><th>Action</th></tr></thead>
+                                        <tbody id="invoice-items-body"></tbody>
+                                    </table>
+                                </div>
+                                <div class="calculation-box">
+                                    <div class="calc-row"><span>Product Count</span><span id="bill-product-count">0</span></div>
+                                    <div class="calc-row"><span>Product Quantity</span><span id="bill-product-quantity">0</span></div>
+                                    <hr><div class="calc-row"><span>Sub Total</span><span id="bill-sub-total">₹0.00</span></div>
+                                    <div class="calc-row"><span>Discount</span><span id="bill-discount-amount">₹0.00</span></div>
+                                    <div class="calc-row calc-total"><span>Total</span><span id="bill-total">₹0.00</span></div>
+                                </div>
+                            </div>
+                            <div id="finalized-bill-view" class="hidden"></div>
+                            <div id="bill-actions" class="bill-actions">
+                                <button id="clear-bill-btn" class="button button-secondary"><i class="fas fa-trash"></i> Clear Bill</button>
+                                <button id="finalize-bill-btn" class="button button-success"><i class="fas fa-check"></i> Finalize</button>
+                            </div>
+                            <div id="finalized-actions" class="bill-actions hidden">
+                                <button id="edit-bill-btn" class="button button-secondary"><i class="fas fa-pencil-alt"></i> Edit</button>
+                                <button id="share-bill-btn" class="button button-info"><i class="fas fa-share"></i> Share</button>
+                                <button id="save-bill-btn" class="button button-success"><i class="fas fa-save"></i> Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="old-invoices-list" class="hidden">
+                     <div class="admin-header">
+                         <h2 class="page-title"><i class="fas fa-history"></i> Old Invoices</h2>
+                         <button id="back-to-billing-btn2" class="button button-secondary"><i class="fas fa-arrow-left"></i> Back</button>
+                    </div>
+                    <div class="table-container">
+                        <table class="custom-table">
+                            <thead><tr><th>Bill No</th><th>Date</th><th>Customer Name</th><th>Phone</th><th>Discount</th><th>Total</th><th>Actions</th></tr></thead>
+                            <tbody id="old-invoices-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <div id="product-modal" class="modal-backdrop hidden">
+        <div class="modal-content"><h3 id="modal-title" class="modal-title"><i class="fas fa-box-open"></i> Add New Product</h3>
+            <form id="product-form" class="modal-form">
+                <input type="hidden" id="product-id">
+                <div class="form-group"><input type="text" id="product-name" placeholder="English Name" class="form-input" required><input type="text" id="product-tamil-name" placeholder="Tamil Name" class="form-input" required><input type="number" id="product-original-price" placeholder="Original Price (₹)" class="form-input" required step="0.01"><input type="number" id="product-offer-price" placeholder="Offer Price (₹)" class="form-input" required step="0.01"><input type="text" id="product-category" placeholder="Category" class="form-input" required></div>
+                <div class="modal-actions"><button type="button" id="cancel-btn" class="button button-secondary"><i class="fas fa-times"></i> Cancel</button><button type="submit" id="save-btn" class="button button-primary"><i class="fas fa-save"></i> Save Product</button></div>
+            </form>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

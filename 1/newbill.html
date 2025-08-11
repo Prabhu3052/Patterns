@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f4f9;
+        }
+        .modal {
+            display: flex;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        .modal-content input {
+            width: 100%;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+        }
+        .modal-content button {
+            padding: 0.75rem 1.5rem;
+            margin: 0.25rem;
+            border: none;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .modal-content button[type="submit"] {
+            background: #10b981;
+            color: white;
+            transition: background-color 0.3s;
+        }
+        .modal-content button[type="submit"]:hover {
+            background: #059669;
+        }
+        .modal-content button[type="button"] {
+            background: #e5e7eb;
+            color: #374151;
+            transition: background-color 0.3s;
+        }
+        .modal-content button[type="button"]:hover {
+            background: #d1d5db;
+        }
+        .error-message {
+            color: #ef4444;
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+        }
+        .bill-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        .bill-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .logo-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            color: #10b981;
+        }
+        .info-boxes {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .info-box {
+            flex: 1;
+            background: #f9fafb;
+            padding: 1rem;
+            border-radius: 0.375rem;
+            text-align: center;
+            font-size: 0.875rem;
+            color: #4b5563;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.5rem;
+        }
+        .custom-table th,
+        .custom-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .custom-table th {
+            background: #f9fafb;
+            font-weight: 600;
+            color: #1f2937;
+        }
+        .custom-table td {
+            color: #374151;
+        }
+        .calculation-box {
+            background: #f9fafb;
+            padding: 1rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+        }
+        .calc-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        .calc-total {
+            font-weight: 600;
+            font-size: 1rem;
+            color: #1f2937;
+        }
+        .price-difference {
+            margin-left: 0.5rem;
+            font-size: 0.875rem;
+        }
+        .price-increase {
+            color: #10b981;
+        }
+        .price-decrease {
+            color: #ef4444;
+        }
+        .hidden {
+            display: none;
+        }
+        @media (max-width: 640px) {
+            .bill-container {
+                padding: 1rem;
+                margin: 1rem;
+            }
+            .info-boxes {
+                flex-direction: column;
+            }
+            .custom-table th,
+            .custom-table td {
+                padding: 0.5rem;
+                font-size: 0.75rem;
+            }
+            .modal-content {
+                padding: 1rem;
+                max-width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="phone-modal" class="modal">
+        <div class="modal-content">
+            <h2 class="text-xl font-semibold text-gray-800">Enter Your Phone Number</h2>
+            <input type="tel" id="phone-input" placeholder="Enter phone number" required>
+            <button type="submit" id="submit-phone">OK</button>
+            <button type="button" id="cancel-phone">Cancel</button>
+            <div id="error-message" class="error-message"></div>
+        </div>
+    </div>
+    <div id="bill-container" class="bill-container hidden">
+        <div class="bill-header">
+            <div class="logo-container">
+                <svg class="logo-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048l5.962-5.962a.75.75 0 011.06 1.06l-5.962 5.962A6.75 6.75 0 0012 19.5a6.75 6.75 0 005.362-10.952l-5.962 5.962a.75.75 0 01-1.06-1.06l5.962-5.962z" />
+                </svg>
+                <h1 class="text-2xl font-bold text-gray-800">Pattaasu Kadai</h1>
+            </div>
+            <div class="info-boxes">
+                <div class="info-box">
+                    <div>Bill No: <span id="bill-number-display"></span></div>
+                </div>
+                <div class="info-box" id="bill-customer-name-display">
+                    <div>Customer: <span></span></div>
+                </div>
+                <div class="info-box">
+                    <div>Date: <span id="bill-date-display"></span></div>
+                </div>
+            </div>
+        </div>
+        <hr class="my-4 border-gray-300">
+        <div class="table-container">
+            <table class="custom-table bill-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Qty</th>
+                        <th>Price</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody id="invoice-items-body"></tbody>
+            </table>
+        </div>
+        <div class="calculation-box">
+            <div class="calc-row"><span>Product Count</span><span id="bill-product-count">0</span></div>
+            <div class="calc-row"><span>Product Quantity</span><span id="bill-product-quantity">0</span></div>
+            <hr class="my-2 border-gray-300">
+            <div class="calc-row"><span>Sub Total</span><span id="bill-sub-total">₹0.00</span></div>
+            <div class="calc-row"><span>Discount</span><span id="bill-discount-amount">₹0.00</span></div>
+            <div class="calc-row calc-total"><span>Total</span><span id="bill-total">₹0.00</span></div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const phoneModal = document.getElementById('phone-modal');
+            const phoneInput = document.getElementById('phone-input');
+            const submitPhone = document.getElementById('submit-phone');
+            const cancelPhone = document.getElementById('cancel-phone');
+            const errorMessage = document.getElementById('error-message');
+            const billContainer = document.getElementById('bill-container');
+            const billCustomerName = document.querySelector('#bill-customer-name-display span');
+            const billDate = document.getElementById('bill-date-display');
+            const billNumberDisplay = document.getElementById('bill-number-display');
+            const invoiceItemsBody = document.getElementById('invoice-items-body');
+            const billProductCount = document.getElementById('bill-product-count');
+            const billProductQuantity = document.getElementById('bill-product-quantity');
+            const billSubTotal = document.getElementById('bill-sub-total');
+            const billDiscountAmount = document.getElementById('bill-discount-amount');
+            const billTotal = document.getElementById('bill-total');
+
+            // Get bill number from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const billNumber = urlParams.get('billNumber');
+
+            if (!billNumber) {
+                phoneModal.style.display = 'none';
+                errorMessage.textContent = 'No bill number provided.';
+                return;
+            }
+
+            // Store products data
+            let allProducts = [];
+
+            // Handle phone number submission
+            submitPhone.addEventListener('click', async () => {
+                const phone = phoneInput.value.trim();
+                if (!phone) {
+                    errorMessage.textContent = 'Please enter a phone number.';
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`./fetch_invoice_details.php?billNumber=${encodeURIComponent(billNumber)}&phone=${encodeURIComponent(phone)}`);
+                    const data = await response.json();
+
+                    if (data.status === 'error') {
+                        errorMessage.textContent = data.message;
+                        return;
+                    }
+
+                    // Store products data
+                    allProducts = data.products;
+
+                    // Hide modal and show bill
+                    phoneModal.style.display = 'none';
+                    billContainer.classList.remove('hidden');
+
+                    // Render invoice details
+                    billCustomerName.textContent = data.invoice.customerName || 'N/A';
+                    billDate.textContent = new Date(data.invoice.billDate).toLocaleDateString('en-GB');
+                    billNumberDisplay.textContent = data.invoice.billNumber;
+                    invoiceItemsBody.innerHTML = '';
+                    data.items.forEach(item => {
+                        let priceDisplay = `₹${item.price.toFixed(2)}`;
+                        if (item.price > item.purchasedPrice) {
+                            const difference = (item.price - item.purchasedPrice).toFixed(2);
+                            priceDisplay += `<span class="price-difference price-increase">(↑ +${difference})</span>`;
+                        } else if (item.price < item.purchasedPrice) {
+                            const difference = (item.purchasedPrice - item.price).toFixed(2);
+                            priceDisplay += `<span class="price-difference price-decrease">(↓ -${difference})</span>`;
+                        }
+                        const row = invoiceItemsBody.insertRow();
+                        row.innerHTML = `
+                            <td>${item.name} (${item.tamilName})</td>
+                            <td>${item.quantity}</td>
+                            <td>${priceDisplay}</td>
+                            <td>₹${item.amount.toFixed(2)}</td>`;
+                    });
+                    billProductCount.textContent = data.calculations.productCount;
+                    billProductQuantity.textContent = data.calculations.productQuantity;
+                    billSubTotal.textContent = `₹${data.calculations.subTotal.toFixed(2)}`;
+                    billDiscountAmount.textContent = `₹${data.calculations.discountAmount.toFixed(2)}`;
+                    billTotal.textContent = `₹${data.calculations.total.toFixed(2)}`;
+                } catch (error) {
+                    errorMessage.textContent = 'Error fetching invoice details.';
+                    console.error('Error:', error);
+                }
+            });
+
+            // Cancel button closes the modal
+            cancelPhone.addEventListener('click', () => {
+                window.location.href = '/';
+            });
+        });
+    </script>
+</body>
+</html>
