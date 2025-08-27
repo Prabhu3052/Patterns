@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enquiry Products</title>
+    <style>
+        /* General Body Styles */
+body {
+    font-family: 'Poppins', sans-serif; /* A more modern font */
+    background-color: #f8f9fa; /* Lighter, cleaner background */
+    margin: 0;
+    color: #343a40;
+    -webkit-font-smoothing: antialiased; /* Smoother text rendering */
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Main Table Container */
+.admin-table {
+    width: 100%;
+    border-collapse: collapse; /* Keeps borders clean */
+    margin-top: 25px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* Softer, deeper shadow */
+    border-radius: 8px; /* Rounded corners */
+    overflow: hidden; /* Ensures child elements respect the border radius */
+}
+h1{
+    text-align: center;
+    color: #343a40; /* Darker text for better contrast */
+    margin-top: 50px;
+    font-size: 1.8rem; /* Slightly larger font size */
+    font-weight: 600;
+    padding: 30px; /* Semibold for emphasis */
+}
+
+/* Table Headers (th) and Cells (td) */
+.admin-table th, .admin-table td {
+    padding: 16px 20px; /* Increased padding for better spacing */
+    text-align: left;
+    vertical-align: middle; /* Ensures content is vertically centered */
+    border-bottom: 1px solid #dee2e6; /* Subtle bottom border for rows */
+}
+
+/* Remove border from the last row for a cleaner look */
+.admin-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Table Header Specific Styles */
+.admin-table th {
+    background-color: #f1f3f5; /* Light gray header background */
+    font-weight: 600; /* Semibold for emphasis */
+    color: #495057;
+    font-size: 0.9rem;
+    text-transform: uppercase; /* Professional look */
+    letter-spacing: 0.5px;
+}
+
+/* Category Header Row - Make it stand out */
+.category-header-row th {
+    background-color: #3998ff; /* A strong primary color */
+    color: #ffffff; /* White text for contrast */
+    font-size: 1.1rem;
+    text-align: center;
+    font-weight: 700;
+    padding: 12px;
+    letter-spacing: 1px;
+}
+
+/* Style for Out of Stock Rows */
+.out-of-stock {
+    background-color: #d8f7ff; /* Softer red background */
+    color: #c53030; /* Darker red text for readability */
+}
+
+/* Hover effect for data rows for better interactivity */
+.admin-table tbody tr:not(.out-of-stock):hover {
+    background-color: #f8f9fa; /* Highlight on hover */
+}
+
+/* Align price columns to the right for numerical data */
+.admin-table td:nth-child(4), 
+.admin-table td:nth-child(5) {
+    text-align: right;
+    font-family: 'Roboto Mono', monospace; /* Monospaced font for numbers */
+}
+
+/* Make the offer price stand out */
+.admin-table td:nth-child(5) {
+    font-weight: 600;
+    color: #28a745; /* Green color for positive value */
+}
+    </style>
+</head>
+<body>
+    <h1>Sri Senthuram Crackers</h1>
+    <div id="enquiry-product-list"></div>
+
+    <script>
+        async function renderEnquiryTable() {
+            try {
+                const response = await fetch('./get_enquiry.php');
+                if (!response.ok) throw new Error("Network response failed");
+                const enquiryProducts = await response.json();
+                const container = document.getElementById('enquiry-product-list');
+                container.innerHTML = '';
+                const table = document.createElement('table');
+                table.className = 'admin-table';
+                const thead = document.createElement('thead');
+                thead.innerHTML = `<tr><th>Product ID</th><th>Name</th><th>Tamil Name</th><th>Original Price</th><th>Offer Price</th><th>Quantities</th><th>Stock</th></tr>`;
+                table.appendChild(thead);
+                const tbody = document.createElement('tbody');
+                const productsByCategory = enquiryProducts.reduce((acc, p) => {
+                    const category = p.category || 'Uncategorized';
+                    if (!acc[category]) acc[category] = [];
+                    acc[category].push(p);
+                    return acc;
+                }, {});
+                for (const category in productsByCategory) {
+                    const headerRow = tbody.insertRow();
+                    headerRow.className = 'category-header-row';
+                    headerRow.innerHTML = `<th colspan="7">${category}</th>`;
+                    productsByCategory[category].forEach(product => {
+                        const row = tbody.insertRow();
+                        const stockText = product.inStock === 1 ? 'No Stock' : 'In Stock';
+                        row.className = product.inStock === 1 ? 'out-of-stock' : '';
+                        row.innerHTML = `
+                            <td>${product.productId}</td>
+                            <td>${product.name}</td>
+                            <td>${product.tamilName}</td>
+                            <td>₹${parseFloat(product.originalPrice).toFixed(2)}</td>
+                            <td>₹${parseFloat(product.offerPrice).toFixed(2)}</td>
+                            <td>${product.quantities}</td>
+                            <td>${stockText}</td>
+                        `;
+                    });
+                }
+                table.appendChild(tbody);
+                container.appendChild(table);
+            } catch (error) {
+                console.error('Failed to load enquiry products:', error);
+                const container = document.getElementById('enquiry-product-list');
+                container.innerHTML = '<p>Could not load enquiry data. Please check the connection and PHP scripts.</p>';
+            }
+        }
+        renderEnquiryTable();
+    </script>
+</body>
+</html>
