@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Old Estimations</title>
+    <style>
+        /* Base styles from your products.html for consistency */
+        :root {
+            --primary-color: #2c3e50;
+            --primary-hover: #34495e;
+            --secondary-color: #e67e22;
+            --secondary-hover: #d35400;
+            --neutral-color: #ecf0f1;
+            --background-light: #f4f6f7;
+            --background-white: #ffffff;
+            --text-dark: #212529;
+            --text-light: #ffffff;
+        }
+        body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--background-light); color: var(--text-dark); overflow-x: hidden; transition: margin-left 0.4s ease; }
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
+        header { display: flex; justify-content: space-between; align-items: center; background: var(--primary-color); color: var(--text-light); padding: 15px 25px; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        header .logo { font-size: 1.6rem; font-weight: 700; }
+        .header-actions { display: flex; align-items: center; gap: 20px; }
+        header .logout-btn { background: var(--secondary-color); border: none; padding: 10px 20px; border-radius: 50px; cursor: pointer; color: var(--text-light); font-weight: 500; transition: background 0.3s, transform 0.2s; }
+        header .logout-btn:hover { background: var(--secondary-hover); transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        .hamburger { display: none; flex-direction: column; justify-content: space-between; cursor: pointer; width: 30px; height: 21px; position: relative; z-index: 1001; transition: transform 0.3s; }
+        .hamburger span { display: block; height: 3px; width: 100%; background: var(--text-light); border-radius: 2px; transition: all 0.3s ease-in-out; }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+        .hamburger.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+        .sidebar { position: fixed; top: 0; left: 0; width: 250px; height: 100%; background: var(--background-white); box-shadow: 2px 0 10px rgba(0,0,0,0.1); padding-top: 80px; z-index: 999; transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .sidebar ul { list-style: none; padding: 0; margin: 0; }
+        .sidebar ul li a { display: flex; align-items: center; padding: 18px 25px; text-decoration: none; color: var(--text-dark); transition: background 0.3s, color 0.3s; font-weight: 500; position: relative; }
+        .sidebar ul li a:hover { background: var(--background-light); color: var(--primary-color); }
+        .sidebar ul li a.active { background: var(--primary-color); color: var(--text-light); }
+        .sidebar ul li a.active::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: var(--secondary-color); }
+        .content { margin-left: 250px; padding: 100px 30px 30px; transition: margin-left 0.4s ease; }
+        @media (max-width: 768px) {
+            .hamburger { display: flex; }
+            header .logout-btn { display: none; }
+            .header-actions { display: none; }
+            .sidebar { left: unset; right: -250px; box-shadow: -2px 0 10px rgba(0,0,0,0.1); }
+            .sidebar.active { right: 0; transform: translateX(0); }
+            .content { margin-left: 0; padding: 100px 20px 20px; }
+            .main-container { display: none; }
+            .mobile-message {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                text-align: center;
+                font-size: 1.5rem;
+                color: var(--text-dark);
+            }
+        }
+        @media (min-width: 769px) {
+            .mobile-message { display: none; }
+        }
+
+        /* Table styles */
+        .main-container { padding: 20px; }
+        .table-container { overflow-x: auto; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #f2f2f2; color: #333; }
+        .action-cell { white-space: nowrap; }
+        .action-btn { 
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            margin-right: 5px;
+            transition: background 0.3s;
+        }
+        .view-btn { background-color: #007bff; color: white; }
+        .edit-btn { background-color: #ff9800; color: white; }
+        
+        @media screen and (max-width: 476px) {
+            .main-container { padding: 10px; }
+            .table-container { 
+                overflow-x: auto;
+            }
+            table {
+                min-width: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-message">
+        <p>This page is not available on mobile devices.</p>
+        <p>Please use a tablet or desktop to view.</p>
+    </div>
+
+    <header>
+        <div class="logo">Company Logo</div>
+        <div class="header-actions">
+            <button class="logout-btn">Logout</button>
+        </div>
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </header>
+
+    <div class="sidebar" id="sidebar">
+        <ul>
+            <li><a href="products.html">🏠 Products</a></li>
+            <li><a href="new_estimation.html">📝 New Estimation</a></li>
+            <li><a href="old_estimation.html" class="active">🧾 Old Estimations</a></li>
+            <li><a href="#">🛒 Shop</a></li>
+            <li><a href="#">ℹ️ About Us</a></li>
+            <li><a href="#">📞 Contact Us</a></li>
+        </ul>
+    </div>
+
+    <div class="content">
+        <div class="main-container">
+            <h2>Old Estimations</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Bill No</th>
+                            <th>Date</th>
+                            <th>Customer Name</th>
+                            <th>Discount</th>
+                            <th>Total</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="estimationsTableBody">
+                        <!-- Estimations will be loaded here dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const hamburger = document.getElementById('hamburger');
+            const sidebar = document.getElementById('sidebar');
+
+            hamburger.addEventListener('click', () => {
+                sidebar.classList.toggle('active');
+                hamburger.classList.toggle('active');
+            });
+
+            const estimationsTableBody = document.getElementById('estimationsTableBody');
+
+            const fetchOldEstimations = async () => {
+                try {
+                    const response = await fetch('fetch_old_estimations.php');
+                    const estimations = await response.json();
+                    renderEstimations(estimations);
+                } catch (error) {
+                    console.error('Error fetching old estimations:', error);
+                    alert('Failed to load old estimations. Please try again later.');
+                }
+            };
+
+            const renderEstimations = (estimations) => {
+                estimationsTableBody.innerHTML = '';
+                estimations.forEach(est => {
+                    const row = document.createElement('tr');
+                    const date = new Date(est.date).toLocaleDateString('en-GB');
+                    row.innerHTML = `
+                        <td>${est.estimation_number}</td>
+                        <td>${date}</td>
+                        <td>${est.customer_name}</td>
+                        <td>${est.discount}%</td>
+                        <td>₹${parseFloat(est.total_amount).toFixed(2)}</td>
+                        <td class="action-cell">
+                            <button class="action-btn view-btn" data-estimation-number="${est.estimation_number}">View</button>
+                            <button class="action-btn edit-btn" data-estimation-number="${est.estimation_number}">Edit</button>
+                        </td>
+                    `;
+                    estimationsTableBody.appendChild(row);
+                });
+
+                document.querySelectorAll('.view-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const estNumber = e.target.getAttribute('data-estimation-number');
+                        redirectToNewEstimationPage(estNumber, 'view');
+                    });
+                });
+                
+                document.querySelectorAll('.edit-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const estNumber = e.target.getAttribute('data-estimation-number');
+                        redirectToNewEstimationPage(estNumber, 'edit');
+                    });
+                });
+            };
+
+            const redirectToNewEstimationPage = async (estimationNumber, mode) => {
+                try {
+                    const response = await fetch(`fetch_estimation_details.php?estimation_number=${estimationNumber}`);
+                    const result = await response.json();
+                    
+                    if (result.status === 'success') {
+                        const estimationData = result.data;
+                        const storedProducts = JSON.parse(localStorage.getItem('products')) || [];
+                        
+                        const billItems = estimationData.items.map(estItem => {
+                            const product = storedProducts.find(p => p.product_id === estItem.product_id);
+                            return {
+                                product_id: product.product_id,
+                                name: product.name,
+                                price: parseFloat(product.offer_price),
+                                quantity: parseInt(estItem.quantity)
+                            };
+                        });
+                        
+                        localStorage.setItem('estimationToLoad', JSON.stringify({
+                            ...estimationData,
+                            items: billItems
+                        }));
+                        
+                        window.location.href = `new_estimation.html?mode=${mode}&est_num=${estimationNumber}`;
+                    } else {
+                        alert(result.message);
+                    }
+                } catch (error) {
+                    console.error('Error fetching estimation details:', error);
+                    alert('Failed to load estimation details. Please try again.');
+                }
+            };
+            
+            fetchOldEstimations();
+        });
+        
+    </script>
+</body>
+</html>

@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Estimation</title>
+    <style>
+        /* Base styles from your products.html for consistency */
+        :root {
+            --primary-color: #2c3e50;
+            --primary-hover: #34495e;
+            --secondary-color: #e67e22;
+            --secondary-hover: #d35400;
+            --neutral-color: #ecf0f1;
+            --background-light: #f4f6f7;
+            --background-white: #ffffff;
+            --text-dark: #212529;
+            --text-light: #ffffff;
+        }
+        body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--background-light); color: var(--text-dark); overflow-x: hidden; transition: margin-left 0.4s ease; }
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
+        header { display: flex; justify-content: space-between; align-items: center; background: var(--primary-color); color: var(--text-light); padding: 15px 25px; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        header .logo { font-size: 1.6rem; font-weight: 700; }
+        .header-actions { display: flex; align-items: center; gap: 20px; }
+        header .logout-btn { background: var(--secondary-color); border: none; padding: 10px 20px; border-radius: 50px; cursor: pointer; color: var(--text-light); font-weight: 500; transition: background 0.3s, transform 0.2s; }
+        header .logout-btn:hover { background: var(--secondary-hover); transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        .hamburger { display: none; flex-direction: column; justify-content: space-between; cursor: pointer; width: 30px; height: 21px; position: relative; z-index: 1001; transition: transform 0.3s; }
+        .hamburger span { display: block; height: 3px; width: 100%; background: var(--text-light); border-radius: 2px; transition: all 0.3s ease-in-out; }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+        .hamburger.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+        .sidebar { position: fixed; top: 0; left: 0; width: 250px; height: 100%; background: var(--background-white); box-shadow: 2px 0 10px rgba(0,0,0,0.1); padding-top: 80px; z-index: 999; transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .sidebar ul { list-style: none; padding: 0; margin: 0; }
+        .sidebar ul li a { display: flex; align-items: center; padding: 18px 25px; text-decoration: none; color: var(--text-dark); transition: background 0.3s, color 0.3s; font-weight: 500; position: relative; }
+        .sidebar ul li a:hover { background: var(--background-light); color: var(--primary-color); }
+        .sidebar ul li a.active { background: var(--primary-color); color: var(--text-light); }
+        .sidebar ul li a.active::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: var(--secondary-color); }
+        .content { margin-left: 250px; padding: 100px 30px 30px; transition: margin-left 0.4s ease; }
+        @media (max-width: 1024px) {
+            .hamburger { display: flex; }
+            header .logout-btn { display: none; }
+            .header-actions { display: none; }
+            .sidebar { left: unset; right: -250px; box-shadow: -2px 0 10px rgba(0,0,0,0.1); }
+            .sidebar.active { right: 0; transform: translateX(0); }
+            .content { margin-left: 0; padding: 100px 20px 20px; }
+            .estimation-container { display: none; } /* Hide the content for mobile */
+            .mobile-message {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                text-align: center;
+                font-size: 1.5rem;
+                color: var(--text-dark);
+            }
+        }
+        @media (min-width: 1025px) {
+            .mobile-message { display: none; }
+        }
+
+        /* New styles for Estimation page */
+        .estimation-container {
+            display: flex;
+            gap: 20px;
+        }
+        .left-panel {
+            flex: 1;
+            min-width: 300px;
+            background: var(--background-white);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .right-panel {
+            flex: 2;
+            min-width: 400px;
+            background: var(--background-white);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .add-product-section .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+        .clear-btn, .submit-btn {
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+        .clear-btn { background-color: #f44336; color: white; }
+        .submit-btn { background-color: #4CAF50; color: white; }
+        .bill-preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+        .bill-preview-header h3 { margin: 0; }
+        .bill-preview-table table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .bill-preview-table th, .bill-preview-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .bill-preview-table th:last-child, .bill-preview-table td:last-child { text-align: right; }
+        .bill-preview-table td button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #f44336;
+        }
+        .editable-cell {
+            padding: 0;
+            cursor: pointer;
+        }
+        .editable-cell input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            padding: 10px;
+            box-sizing: border-box;
+            font-size: 1em;
+            text-align: left;
+        }
+        .calculation-summary {
+            text-align: right;
+        }
+        .calculation-summary div {
+            margin-bottom: 5px;
+        }
+        .calculation-summary .total-row {
+            font-weight: bold;
+            font-size: 1.2em;
+            border-top: 2px solid #333;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+        .preview-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .footer-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s, opacity 0.3s;
+        }
+        #finalizeBtn { background-color: #007bff; color: white; }
+        #editBtn, #saveBtn, #markedBtn, #savedBtn, #printBtn { display: none; }
+        #editBtn { background-color: #ff9800; color: white; }
+        #saveBtn { background-color: #4CAF50; color: white; }
+        #markedBtn { background-color: #6c757d; color: white; }
+        #savedBtn { background-color: #28a745; color: white; }
+        #printBtn { background-color: #337ab7; color: white; }
+        .marked, .saved { opacity: 0.5; cursor: not-allowed; }
+        .disabled-btn { opacity: 0.5; cursor: not-allowed; }
+        .bill-info-row {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+        .bill-info-row p {
+            margin: 0 10px 5px 0;
+        }
+        .header-btn {
+            padding: 8px 15px;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .header-btn:hover {
+            background-color: var(--secondary-hover);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+            border-radius: 8px;
+        }
+        .modal-buttons button {
+            margin: 10px;
+            padding: 8px 15px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+        }
+        .new-bill-btn-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        /* Print styles */
+        @media print {
+            body * { visibility: hidden; }
+            .right-panel, .right-panel * { visibility: visible; }
+            .right-panel { position: absolute; left: 0; top: 0; width: 100%; }
+            .preview-footer { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-message">
+        <p>This page is not available for mobile.</p>
+    </div>
+    
+    <header>
+        <div class="logo">Company Logo</div>
+        <div class="header-actions">
+            <button class="logout-btn">Logout</button>
+        </div>
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </header>
+
+    <div class="sidebar" id="sidebar">
+        <ul>
+            <li><a href="products.html">🏠 Products</a></li>
+            <li><a href="new_estimation.html" class="active">📝 New Estimation</a></li>
+            <li><a href="old_estimation.html">🛒 Shop</a></li>
+            <li><a href="#">ℹ️ About Us</a></li>
+            <li><a href="#">📞 Contact Us</a></li>
+        </ul>
+    </div>
+
+    <div class="content">
+        <div class="estimation-container">
+            <!-- Left Panel - Add Products -->
+            <div class="left-panel">
+                <h3>Customer & Bill Details</h3>
+                <div class="input-group">
+                    <label for="customerName">Customer Name</label>
+                    <input type="text" id="customerName">
+                </div>
+                <div class="input-group">
+                    <label for="customerPhone">Customer Phone</label>
+                    <input type="text" id="customerPhone">
+                </div>
+                <div class="input-group">
+                    <label for="discount">Discount %</label>
+                    <input type="number" id="discount" value="0" min="0" max="100">
+                </div>
+                <h3>Add Products</h3>
+                <div class="input-group">
+                    <label for="productSearch">Product Name or ID</label>
+                    <input list="productsDatalist" id="productSearch">
+                    <datalist id="productsDatalist"></datalist>
+                </div>
+                <div class="input-group">
+                    <label for="productQuantity">Quantity</label>
+                    <input type="number" id="productQuantity" value="1" min="1">
+                </div>
+                <div class="add-product-section">
+                    <div class="action-buttons">
+                        <button id="clearBtn" class="clear-btn">❌ Clear</button>
+                        <button id="submitBtn" class="submit-btn">✅ Submit</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel - Bill Preview -->
+            <div class="right-panel">
+                <div class="new-bill-btn-container">
+                    <button id="newBillHeaderBtn" class="header-btn">New Bill</button>
+                </div>
+                <div class="bill-preview-header">
+                    <img src="https://placehold.co/150x50/2c3e50/ffffff?text=Pattasu+Kadai" alt="Pattasu Kadai Logo">
+                    <div>
+                        <p><strong>Company Name</strong></p>
+                        <p>123 Main Street</p>
+                        <p>City, State, ZIP</p>
+                    </div>
+                </div>
+                
+                <div class="bill-info-row">
+                    <p><strong>Customer:</strong> <span id="customerNameSpan"></span></p>
+                    <p><strong>Date:</strong> <span id="currentDate"></span></p>
+                    <p><strong>Bill No:</strong> <span id="billNumberSpan">Draft</span></p>
+                    <p><strong>Discount:</strong> <span id="discountSpan">0%</span></p>
+                </div>
+
+                <div class="bill-preview-table">
+                    <table>
+                        <thead>
+                            <tr id="tableHeaderRow">
+                                <th>Name</th>
+                                <th>Qty</th>
+                                <th>Price</th>
+                                <th>Amount</th>
+                                <th class="action-header">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="billItemsBody">
+                            <!-- Bill items will be added here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="calculation-summary">
+                    <div>Product Count: <span id="productCount">0</span></div>
+                    <div>Product Quantity: <span id="productQuantitySum">0</span></div>
+                    <div>Sub Total: ₹<span id="subTotal">0.00</span></div>
+                    <div>Discount: ₹<span id="discountAmount">0.00</span></div>
+                    <div class="total-row">Total: ₹<span id="totalAmount">0.00</span></div>
+                </div>
+
+                <div class="preview-footer">
+                    <button id="clearBillFooterBtn" class="footer-btn">Clear Bill</button>
+                    <button id="finalizeBtn" class="footer-btn">Finalize</button>
+                    <button id="editBtn" class="footer-btn">Edit</button>
+                    <button id="saveBtn" class="footer-btn">Save</button>
+                    <button id="markedBtn" class="footer-btn">Marked</button>
+                    <button id="savedBtn" class="footer-btn saved">Saved</button>
+                    <button id="printBtn" class="footer-btn">Print</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal for unsaved changes -->
+    <div id="unsavedModal" class="modal">
+      <div class="modal-content">
+        <h4>Unsaved Draft Bill</h4>
+        <p>Do you want to clear the current draft and start a new bill?</p>
+        <div class="modal-buttons">
+          <button id="modalYesBtn" class="submit-btn">Yes</button>
+          <button id="modalNoBtn" class="clear-btn">No</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // General UI scripts
+            const hamburger = document.getElementById('hamburger');
+            const sidebar = document.getElementById('sidebar');
+            hamburger.addEventListener('click', () => {
+                sidebar.classList.toggle('active');
+                hamburger.classList.toggle('active');
+            });
+
+            // Estimation Page Logic
+            const newBillHeaderBtn = document.getElementById('newBillHeaderBtn');
+            const productSearchInput = document.getElementById('productSearch');
+            const productsDatalist = document.getElementById('productsDatalist');
+            const productQuantityInput = document.getElementById('productQuantity');
+            const submitBtn = document.getElementById('submitBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const clearBillFooterBtn = document.getElementById('clearBillFooterBtn');
+            const billItemsBody = document.getElementById('billItemsBody');
+            const finalizeBtn = document.getElementById('finalizeBtn');
+            const editBtn = document.getElementById('editBtn');
+            const saveBtn = document.getElementById('saveBtn');
+            const markedBtn = document.getElementById('markedBtn');
+            const savedBtn = document.getElementById('savedBtn');
+            const printBtn = document.getElementById('printBtn');
+
+            const customerNameInput = document.getElementById('customerName');
+            const customerPhoneInput = document.getElementById('customerPhone');
+            const discountInput = document.getElementById('discount');
+
+            const customerNameSpan = document.getElementById('customerNameSpan');
+            const billNumberSpan = document.getElementById('billNumberSpan');
+            const discountSpan = document.getElementById('discountSpan');
+            const tableHeaderRow = document.getElementById('tableHeaderRow');
+            
+            const unsavedModal = document.getElementById('unsavedModal');
+            const modalYesBtn = document.getElementById('modalYesBtn');
+            const modalNoBtn = document.getElementById('modalNoBtn');
+
+            let allProducts = [];
+            let currentBillItems = [];
+            let isFinalized = false;
+            let isSaved = false;
+            
+            // Load products from local storage on page load
+            const loadProductsFromLocalStorage = () => {
+                const storedProducts = localStorage.getItem('products');
+                if (storedProducts) {
+                    allProducts = JSON.parse(storedProducts);
+                    renderProductDatalist();
+                } else {
+                    console.error("Products not found in local storage. Please visit the products page first.");
+                }
+            };
+            
+            const loadEstimationFromURL = () => {
+                const urlParams = new URLSearchParams(window.location.search);
+                const mode = urlParams.get('mode');
+                
+                if (mode) {
+                    const storedEstimation = localStorage.getItem('estimationToLoad');
+                    if (storedEstimation) {
+                        const estimation = JSON.parse(storedEstimation);
+                        customerNameInput.value = estimation.customer_name;
+                        customerPhoneInput.value = estimation.phone_number;
+                        discountInput.value = estimation.discount;
+                        billNumberSpan.textContent = estimation.estimation_number;
+                        currentBillItems = estimation.items;
+                        
+                        // Set the state based on the mode
+                        if (mode === 'view') {
+                            isFinalized = true;
+                            isSaved = true;
+                            customerNameInput.disabled = true;
+                            customerPhoneInput.disabled = true;
+                            discountInput.disabled = true;
+                            productSearchInput.disabled = true;
+                            productQuantityInput.disabled = true;
+                            submitBtn.disabled = true;
+                            clearBtn.disabled = true;
+                            
+                            finalizeBtn.style.display = 'none';
+                            editBtn.style.display = 'none';
+                            saveBtn.style.display = 'none';
+                            markedBtn.style.display = estimation.is_marked ? 'block' : 'none';
+                            markedBtn.classList.toggle('marked', estimation.is_marked);
+                            markedBtn.disabled = true;
+
+                            savedBtn.style.display = 'block';
+                            savedBtn.classList.add('saved');
+                            savedBtn.disabled = true;
+                            printBtn.style.display = 'block';
+                            clearBillFooterBtn.style.display = 'none';
+                        } else if (mode === 'edit') {
+                            isFinalized = false;
+                            isSaved = true; // Mark as saved initially because it's from a saved bill
+                            customerNameInput.disabled = false;
+                            customerPhoneInput.disabled = false;
+                            discountInput.disabled = false;
+                            productSearchInput.disabled = false;
+                            productQuantityInput.disabled = false;
+                            submitBtn.disabled = false;
+                            clearBtn.disabled = false;
+                            
+                            finalizeBtn.style.display = 'block';
+                            editBtn.style.display = 'none';
+                            saveBtn.style.display = 'none';
+                            markedBtn.style.display = 'none';
+                            savedBtn.style.display = 'none';
+                            printBtn.style.display = 'none';
+                            clearBillFooterBtn.style.display = 'block';
+                        }
+                        
+                        renderBillPreview();
+                        localStorage.removeItem('estimationToLoad'); // Clear temporary data
+                    }
+                }
+            };
+
+            const renderProductDatalist = () => {
+                productsDatalist.innerHTML = '';
+                allProducts.forEach(product => {
+                    const option = document.createElement('option');
+                    option.value = product.product_id + ' - ' + product.name;
+                    productsDatalist.appendChild(option);
+                });
+            };
+
+            const updateCalculations = () => {
+                let productCount = currentBillItems.length;
+                let productQuantitySum = currentBillItems.reduce((sum, item) => sum + parseInt(item.quantity), 0);
+                let subTotal = currentBillItems.reduce((sum, item) => sum + (item.price * parseInt(item.quantity)), 0);
+                let discountPercentage = parseFloat(discountInput.value) || 0;
+                let discountAmount = subTotal * (discountPercentage / 100);
+                let totalAmount = subTotal - discountAmount;
+                
+                document.getElementById('productCount').textContent = productCount;
+                document.getElementById('productQuantitySum').textContent = productQuantitySum;
+                document.getElementById('subTotal').textContent = subTotal.toFixed(2);
+                document.getElementById('discountAmount').textContent = discountAmount.toFixed(2);
+                document.getElementById('totalAmount').textContent = totalAmount.toFixed(2);
+            };
+
+            const renderBillPreview = () => {
+                billItemsBody.innerHTML = '';
+                currentBillItems.forEach((item, index) => {
+                    const row = document.createElement('tr');
+                    const amount = (item.price * item.quantity).toFixed(2);
+                    row.innerHTML = `
+                        <td>${item.name}</td>
+                        <td class="editable-cell">
+                            <input type="number" value="${item.quantity}" data-index="${index}" class="quantity-input" min="1" ${isFinalized ? 'disabled' : ''}>
+                        </td>
+                        <td class="editable-cell">
+                            <input type="number" value="${item.price.toFixed(2)}" data-index="${index}" class="price-input" step="0.01" ${isFinalized ? 'disabled' : ''}>
+                        </td>
+                        <td>₹${amount}</td>
+                        <td class="action-cell">
+                          <button class="remove-item-btn" data-index="${index}" ${isFinalized ? 'disabled' : ''}>🗑️</button>
+                        </td>
+                    `;
+                    billItemsBody.appendChild(row);
+                });
+                updateCalculations();
+                toggleActionColumn();
+            };
+
+            const toggleActionColumn = () => {
+                const actionHeader = document.querySelector('.action-header');
+                if (isFinalized) {
+                    if (actionHeader) actionHeader.style.display = 'none';
+                    document.querySelectorAll('.action-cell').forEach(cell => cell.style.display = 'none');
+                } else {
+                    if (actionHeader) actionHeader.style.display = 'table-cell';
+                    document.querySelectorAll('.action-cell').forEach(cell => cell.style.display = 'table-cell');
+                }
+            };
+            
+            const resetBill = () => {
+                customerNameInput.value = '';
+                customerPhoneInput.value = '';
+                discountInput.value = '0';
+                customerNameSpan.textContent = '';
+                billNumberSpan.textContent = 'Draft';
+                discountSpan.textContent = '0%';
+                currentBillItems = [];
+                isFinalized = false;
+                isSaved = false;
+                
+                document.querySelectorAll('input, button').forEach(el => el.disabled = false);
+                productSearchInput.disabled = false;
+                productQuantityInput.disabled = false;
+                submitBtn.disabled = false;
+                clearBtn.disabled = false;
+                customerNameInput.disabled = false;
+                customerPhoneInput.disabled = false;
+                discountInput.disabled = false;
+                clearBillFooterBtn.disabled = false;
+
+                finalizeBtn.style.display = 'block';
+                editBtn.style.display = 'none';
+                saveBtn.style.display = 'none';
+                markedBtn.style.display = 'none';
+                savedBtn.style.display = 'none';
+                printBtn.style.display = 'none';
+                
+                renderBillPreview();
+                toggleActionColumn();
+            };
+
+            // Event Listeners
+            newBillHeaderBtn.addEventListener('click', () => {
+                if (currentBillItems.length > 0 && !isSaved) {
+                    unsavedModal.style.display = 'block';
+                } else {
+                    resetBill();
+                }
+            });
+
+            modalYesBtn.addEventListener('click', () => {
+                resetBill();
+                unsavedModal.style.display = 'none';
+            });
+            
+            modalNoBtn.addEventListener('click', () => {
+                unsavedModal.style.display = 'none';
+            });
+            
+            clearBtn.addEventListener('click', () => {
+                if (isFinalized) return;
+                currentBillItems = [];
+                renderBillPreview();
+            });
+
+            clearBillFooterBtn.addEventListener('click', () => {
+                currentBillItems = [];
+                renderBillPreview();
+            });
+
+            submitBtn.addEventListener('click', () => {
+                if (isFinalized) return;
+                const searchTerm = productSearchInput.value.split(' - ')[0];
+                const product = allProducts.find(p => p.product_id === searchTerm || p.name === searchTerm);
+
+                if (product) {
+                    const quantity = parseInt(productQuantityInput.value) || 1;
+                    if (quantity < 1) {
+                        alert("Quantity must be at least 1.");
+                        return;
+                    }
+
+                    const existingItemIndex = currentBillItems.findIndex(item => item.product_id === product.product_id);
+                    if (existingItemIndex > -1) {
+                        currentBillItems[existingItemIndex].quantity += quantity;
+                    } else {
+                        const billItem = {
+                            product_id: product.product_id,
+                            name: product.name,
+                            price: parseFloat(product.offer_price),
+                            quantity: quantity
+                        };
+                        currentBillItems.push(billItem);
+                    }
+                    renderBillPreview();
+                    productSearchInput.value = '';
+                    productQuantityInput.value = '1';
+                } else {
+                    alert('Invalid Product Name or ID!');
+                }
+            });
+
+            billItemsBody.addEventListener('input', (e) => {
+                const target = e.target;
+                const index = target.getAttribute('data-index');
+                if (target.classList.contains('quantity-input')) {
+                    currentBillItems[index].quantity = parseInt(target.value) || 0;
+                }
+                if (target.classList.contains('price-input')) {
+                    currentBillItems[index].price = parseFloat(target.value) || 0;
+                }
+                updateCalculations();
+            });
+
+            billItemsBody.addEventListener('click', (e) => {
+                if (isFinalized) return;
+                if (e.target.classList.contains('remove-item-btn')) {
+                    const index = e.target.getAttribute('data-index');
+                    currentBillItems.splice(index, 1);
+                    renderBillPreview();
+                }
+            });
+
+            discountInput.addEventListener('input', () => {
+                updateCalculations();
+                discountSpan.textContent = `${discountInput.value}%`;
+            });
+            customerNameInput.addEventListener('input', () => { customerNameSpan.textContent = customerNameInput.value; });
+
+            // Keyboard navigation in left panel
+            const leftPanelInputs = document.querySelectorAll('.left-panel input');
+            leftPanelInputs.forEach((input, index) => {
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (input.id === 'productQuantity') {
+                            submitBtn.click();
+                        } else if (index < leftPanelInputs.length - 1) {
+                            leftPanelInputs[index + 1].focus();
+                        }
+                    }
+                });
+            });
+
+            finalizeBtn.addEventListener('click', () => {
+                if (currentBillItems.length === 0) {
+                    alert("Please add products to the bill before finalizing.");
+                    return;
+                }
+                isFinalized = true;
+                finalizeBtn.style.display = 'none';
+                clearBillFooterBtn.style.display = 'none';
+                editBtn.style.display = 'block';
+                saveBtn.style.display = 'block';
+                
+                productSearchInput.disabled = true;
+                productQuantityInput.disabled = true;
+                submitBtn.disabled = true;
+                clearBtn.disabled = true;
+                customerNameInput.disabled = true;
+                customerPhoneInput.disabled = true;
+                discountInput.disabled = true;
+                
+                renderBillPreview();
+            });
+
+            editBtn.addEventListener('click', () => {
+                isFinalized = false;
+                finalizeBtn.style.display = 'block';
+                clearBillFooterBtn.style.display = 'block';
+                editBtn.style.display = 'none';
+                saveBtn.style.display = 'none';
+
+                productSearchInput.disabled = false;
+                productQuantityInput.disabled = false;
+                submitBtn.disabled = false;
+                clearBtn.disabled = false;
+                customerNameInput.disabled = false;
+                customerPhoneInput.disabled = false;
+                discountInput.disabled = false;
+
+                renderBillPreview();
+            });
+            
+            saveBtn.addEventListener('click', async () => {
+                const customerName = customerNameInput.value;
+                const customerPhone = customerPhoneInput.value;
+                const discount = parseFloat(discountInput.value) || 0;
+                const totalAmount = parseFloat(document.getElementById('totalAmount').textContent);
+                const estimationNumber = billNumberSpan.textContent !== 'Draft' ? billNumberSpan.textContent : null;
+
+                if (!customerName || !customerPhone) {
+                    alert("Customer Name and Phone Number are required!");
+                    return;
+                }
+                
+                const payload = {
+                    action: estimationNumber ? 'update' : 'add',
+                    estimation_number: estimationNumber,
+                    customer_name: customerName,
+                    phone_number: customerPhone,
+                    discount: discount,
+                    total_amount: totalAmount,
+                    created_at: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                    items: currentBillItems.map(item => ({
+                        product_id: item.product_id,
+                        quantity: item.quantity
+                    }))
+                };
+
+                try {
+                    const response = await fetch('new_estimation.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+                    if (result.status === 'success') {
+                        billNumberSpan.textContent = result.estimation_number;
+                        alert("Estimation " + result.estimation_number + " saved successfully!");
+                        
+                        saveBtn.style.display = 'none';
+                        editBtn.style.display = 'none';
+                        finalizeBtn.style.display = 'none';
+                        clearBillFooterBtn.style.display = 'none';
+
+                        // Set the correct state for a saved bill
+                        markedBtn.style.display = 'block';
+                        markedBtn.classList.remove('marked');
+                        markedBtn.disabled = false;
+                        
+                        savedBtn.style.display = 'block';
+                        savedBtn.classList.add('saved');
+                        savedBtn.disabled = true;
+
+                        printBtn.style.display = 'block';
+                        
+                        isSaved = true;
+
+                        customerNameInput.disabled = true;
+                        customerPhoneInput.disabled = true;
+                        discountInput.disabled = true;
+                        productSearchInput.disabled = true;
+                        productQuantityInput.disabled = true;
+                        submitBtn.disabled = true;
+                        clearBtn.disabled = true;
+                        document.querySelectorAll('.remove-item-btn, .editable-cell input').forEach(el => el.disabled = true);
+                    } else {
+                        alert("Error saving estimation: " + result.message);
+                    }
+                } catch (error) {
+                    console.error("Error communicating with server:", error);
+                    alert("Could not connect to server. Please try again.");
+                }
+            });
+            
+            markedBtn.addEventListener('click', async () => {
+                const estimationNumber = billNumberSpan.textContent;
+                const payload = {
+                    action: 'mark',
+                    estimation_number: estimationNumber,
+                    is_marked: 1
+                };
+
+                try {
+                    const response = await fetch('new_estimation.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+                    if (result.status === 'success') {
+                        markedBtn.classList.add('marked');
+                        markedBtn.disabled = true;
+                        alert('Bill ' + estimationNumber + ' marked successfully!');
+                    } else {
+                        alert("Error marking estimation: " + result.message);
+                    }
+                } catch (error) {
+                    console.error("Error communicating with server:", error);
+                    alert("Could not connect to server. Please try again.");
+                }
+            });
+
+            printBtn.addEventListener('click', () => {
+                window.print();
+            });
+
+            // Set current date
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            let mm = today.getMonth() + 1;
+            let dd = today.getDate();
+            if (dd < 10) dd = '0' + dd;
+            if (mm < 10) mm = '0' + mm;
+            document.getElementById('currentDate').textContent = `${dd}/${mm}/${yyyy}`;
+
+            // Initial load
+            loadProductsFromLocalStorage();
+            loadEstimationFromURL();
+        });
+    </script>
+</body>
+</html>

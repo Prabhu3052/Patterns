@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Sidebar Position - Animated Hamburger (Improved)</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50; /* Darker blue */
+            --primary-hover: #34495e; /* Slightly darker blue for hover */
+            
+            --secondary-color: #e67e22; /* Vibrant orange */
+            --secondary-hover: #d35400; /* Darker orange */
+            
+            --neutral-color: #ecf0f1; /* Light gray */
+            
+            --background-light: #f4f6f7; /* Very light gray background */
+            --background-white: #ffffff;
+            
+            --text-dark: #212529;
+            --text-light: #ffffff;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: var(--background-light);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            transition: margin-left 0.4s ease;
+        }
+
+        /* Use a custom font for a modern look */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--primary-color);
+            color: var(--text-light);
+            padding: 15px 25px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        header .logo {
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        header .logout-btn {
+            background: var(--secondary-color);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            color: var(--text-light);
+            font-weight: 500;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        header .logout-btn:hover {
+            background: var(--secondary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        /* Hamburger */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            cursor: pointer;
+            width: 30px;
+            height: 21px;
+            position: relative;
+            z-index: 1001;
+            transition: transform 0.3s;
+        }
+
+        .hamburger span {
+            display: block;
+            height: 3px;
+            width: 100%;
+            background: var(--text-light);
+            border-radius: 2px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        /* Hamburger to "X" transformation */
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: translateY(9px) rotate(45deg);
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: translateY(-9px) rotate(-45deg);
+        }
+
+        /* Sidebar (Desktop) */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 100%;
+            background: var(--background-white);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            padding-top: 80px;
+            z-index: 999;
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar ul li a {
+            display: flex;
+            align-items: center;
+            padding: 18px 25px;
+            text-decoration: none;
+            color: var(--text-dark);
+            transition: background 0.3s, color 0.3s;
+            font-weight: 500;
+            position: relative;
+        }
+
+        .sidebar ul li a:hover {
+            background: var(--background-light);
+            color: var(--primary-color);
+        }
+
+        .sidebar ul li a.active {
+            background: var(--primary-color);
+            color: var(--text-light);
+        }
+        
+        .sidebar ul li a.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 5px;
+            background: var(--secondary-color);
+        }
+
+        /* Content (Desktop) */
+        .content {
+            margin-left: 250px;
+            padding: 100px 30px 30px;
+            transition: margin-left 0.4s ease;
+        }
+        
+        /* Mobile overrides */
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+            
+            header .logout-btn {
+                display: none; /* Hide logout button on mobile for a cleaner look */
+            }
+
+            .header-actions {
+                display: none; /* Hide desktop actions on mobile */
+            }
+            
+            .sidebar {
+                left: unset;
+                right: -250px;
+                box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+            }
+            
+            .sidebar.active {
+                right: 0;
+                transform: translateX(0);
+            }
+            
+            .content {
+                margin-left: 0;
+                padding: 100px 20px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">My App</div>
+        <div class="header-actions">
+            <button class="logout-btn">Logout</button>
+        </div>
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </header>
+
+    <div class="sidebar" id="sidebar">
+        <ul>
+            <li><a href="products.html">🏠 Products</a></li>
+            <li><a href="new_estimation.html" class="active">📝 New Estimation</a></li>
+            <li><a href="old_estimation.html">🛒 Shop</a></li>
+            <li><a href="#">ℹ️ About Us</a></li>
+            <li><a href="#">📞 Contact Us</a></li>
+        </ul>
+    </div>
+
+    <div class="content">
+        <h1>Welcome to My App</h1>
+        <p>This is a single-page site with a dynamic sidebar. When you click the hamburger icon in mobile view, it will transform into an "X" to let you close the menu.</p>
+        <p>The sidebar remains on the **left** in desktop view and slides in from the **right** for mobile users.</p>
+        <br>
+        <p>We've implemented a cleaner, more modern design with a new color scheme and smoother animations for a better user experience.</p>
+    </div>
+
+    <script>
+        const hamburger = document.getElementById('hamburger');
+        const sidebar = document.getElementById('sidebar');
+        const navLinks = document.querySelectorAll('.sidebar ul li a');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('active');
+            hamburger.classList.toggle('active');
+        }
+
+        hamburger.addEventListener('click', toggleSidebar);
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault(); // Prevent default link behavior for this example
+
+                // Remove active class from all links and add to the clicked one
+                navLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                
+                // Close sidebar on mobile
+                if (window.innerWidth <= 768) {
+                    toggleSidebar();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
